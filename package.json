@@ -1,0 +1,27 @@
+{
+  "name": "advocated",
+  "version": "1.0.0",
+  "description": "An offline-first data collection app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glynnbird/advocated.git"
+  },
+  "keywords": [
+    "adovcated",
+    "offline-first"
+  ],
+  "author": "Glynn Bird <glynn.bird@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/glynnbird/advocated/issues"
+  },
+  "homepage": "https://github.com/glynnbird/advocated#readme",
+  "dependencies": {
+    "cfenv": "^1.0.3",
+    "cloudant-envoy": "^0.1.4"
+  }
+}
