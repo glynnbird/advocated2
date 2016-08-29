@@ -112,6 +112,12 @@ var submitForm = function (id) {
       }
 
     }
+    else if (a.name === '_id' && a.value) {
+      o._id = a.value;
+    }
+    else if (a.name === '_rev' && a.value) {
+      o._rev = a.value;
+    }
     
   };
 
@@ -122,16 +128,144 @@ var submitForm = function (id) {
   o.ts = ms();
 
   // write to the database
-  db.post(o).then(function() {
-    Materialize.toast('Saved', 4000);
-  });
+  if (o._id) {
+    db.put(o).then(function() {
+      Materialize.toast('Updated', 1500, '', function() {
+        renderEvents();
+      });
+    });
+  }
+  else {
+    db.post(o).then(function() {
+      Materialize.toast('Saved', 1500, '', function() {
+        renderEvents();
+      });
+    });
+  }
 }
 
-$( document ).ready(function(){
+var initForm = function() {
+  $('form').on('submit', function(event) {
+    event.preventDefault();
+    var btn = $('button[type="submit"]');
+    btn.prop('disabled', true)
+      .addClass('disabled')
+      .text(btn.text() === 'Update' ? 'Updating...' : 'Submitting...');
 
+    submitForm('#' + $(this).attr('id'));
+  });
+};
+
+var updatePage = function() {
+  var docid = null;
+  if (location.search && location.search.indexOf('id=') != -1) {
+    var idx = location.search.indexOf('id=');
+    var h = location.search.indexOf('#', idx) != -1 ? location.search.indexOf('#', idx) : location.search.length;
+    var a = location.search.indexOf('&', idx) != -1 ? location.search.indexOf('&', idx) : location.search.length;
+    docid = location.search.substring(idx+3, Math.min(h, a));
+  }
+  if (docid) {
+    db.get(docid)
+      .then(function(doc) {
+        var page = '/templates/';
+        if (doc.collection == 'session') {
+          page += 'presented.html';
+        } else if (doc.collection == 'event') {
+          page += 'attended.html';
+        } else if (doc.collection == 'blog') {
+          page += 'blogged.html';
+        } else if (doc.collection == 'press') {
+          page += 'pr.html';
+        }
+        $.get(page, function(template) {
+          var rendered = Mustache.render(template, doc);
+          $('#main').html(rendered);
+          initForm();
+        });
+      })
+      .catch(function(err) {
+        console.error(err);
+        renderEvents();
+      });
+  }
+  else {
+    var page = location.hash ? location.hash.substring(1) : null;
+    if (page) {
+      $.get(('/templates/' + page), function(template) {
+        var rendered = Mustache.render(template, {});
+        $('#main').html(rendered);
+        initForm();
+      });
+    }
+    else {
+      renderEvents();
+    }
+  }
+};
+
+var renderEvents = function() {
+  var map = function(doc) {
+    emit(doc.ts, null);
+  }
+  db.query(map, {include_docs:true, descending:true, limit: 50})
+    .then(function(data) {
+      var template = $('#frontpage').html();
+      var rendered = Mustache.render(template, data);
+      $('#main').html(rendered);
+    });
+};
+
+var deleteEvent = function(id, rev) {
+  if (id) {
+    db.remove(id, rev)
+      .then(function(result) {
+        $("#" + id + "_delete").remove();
+        $("#" + id + "_detail").remove();
+      })
+      .catch(function(err) {
+        console.error(err);
+      });
+  }
+};
+
+var toggle = function(domNodeId, parentId) {
+	var expanded = $("#" + domNodeId).is(":visible");
+	if (!expanded && parentId) {
+		$("#" + parentId).toggleClass("active");
+	}
+	$("#" + domNodeId).slideToggle(500, function() {
+		if (expanded && parentId) {
+			$("#" + parentId).toggleClass("active");
+		}
+	});
+};
+
+var initCheckboxes = function(sponsored, categories) {
+	if (sponsored == true || sponsored.toLowerCase() === "true") {
+		$('input[name="sponsored"][value="Sponsored"]').prop('checked', true);
+	}
+	if (categories) {
+		var c = [];
+		if ($.isArray(categories)) {
+			c = categories;
+		}
+		else {
+			c = categories.split(',');
+		}
+		
+		for (var i in c) {
+			$('input[name="categories"][value="' + c[i] + '"]').prop('checked', true);
+		}
+	}
+};
+
+
+$(document).ready(function(){
   // materialize special
-  $(".button-collapse").sideNav();
+  $(".button-collapse").sideNav({
+    closeOnClick: true
+  });
 
-
+  updatePage();
 });
 
