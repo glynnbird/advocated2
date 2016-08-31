@@ -102,7 +102,7 @@ var opts = {
 };
 
 // run envoy
-var envoy = require('../envoy')(opts);
+var envoy = require('cloudant-envoy')(opts);
 envoy.events.on('listening', function() {
   cloudant = envoy.cloudant;
   teamsdb = cloudant.db.use('teams');
