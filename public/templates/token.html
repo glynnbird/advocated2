@@ -1,0 +1,18 @@
+<script>
+  var token = '{{token}}';
+  var req = {
+    method: 'get',
+    url: '/api/token/' + token,
+    dataType: 'json'
+  }
+  $.ajax(req).done(function(data) {
+    console.log('tokendata', data);
+    delete data._rev
+    data._id = '_local/user';
+    db.put(data).then(function() {
+      location.href='/';
+    })
+  }).fail(function(e) {
+    Materialize.toast('Invalid token', 10000);
+  })
+</script>

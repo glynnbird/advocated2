@@ -18,6 +18,8 @@ if ('serviceWorker' in navigator) {
 // ET phone home
 var envoy = window.location.origin;
 var db = new PouchDB('advocated');
+var loggedinuser = null;
+
 
 var user = {
   "_id": "07cebfee8de061fd61bc5cec969acf42",
@@ -157,12 +159,19 @@ var initForm = function() {
 };
 
 var updatePage = function() {
-  var docid = null;
+  var docid = null,
+    token = null;
   if (location.search && location.search.indexOf('id=') != -1) {
     var idx = location.search.indexOf('id=');
     var h = location.search.indexOf('#', idx) != -1 ? location.search.indexOf('#', idx) : location.search.length;
     var a = location.search.indexOf('&', idx) != -1 ? location.search.indexOf('&', idx) : location.search.length;
     docid = location.search.substring(idx+3, Math.min(h, a));
+  }
+  if (location.search && location.search.indexOf('token=') != -1) {
+    var idx = location.search.indexOf('token=');
+    var h = location.search.indexOf('#', idx) != -1 ? location.search.indexOf('#', idx) : location.search.length;
+    var a = location.search.indexOf('&', idx) != -1 ? location.search.indexOf('&', idx) : location.search.length;
+    token = location.search.substring(idx+6, Math.min(h, a));
   }
   if (docid) {
     db.get(docid)
@@ -192,7 +201,7 @@ var updatePage = function() {
     var page = location.hash ? location.hash.substring(1) : null;
     if (page) {
       $.get(('/templates/' + page), function(template) {
-        var rendered = Mustache.render(template, {});
+        var rendered = Mustache.render(template, { token: token, loggedinuser: loggedinuser });
         $('#main').html(rendered);
         initForm();
       });
@@ -264,6 +273,12 @@ $(document).ready(function(){
   // materialize special
   $(".button-collapse").sideNav({
     closeOnClick: true
+  });
+
+  db.get('_local/user').then(function(data) {
+    loggedinuser = data;
+    var msg = 'Welcome back, ' + data.meta.user_name + ' (' + data.meta.team_name + ')';
+    Materialize.toast(msg, 4000);
   });
 
   updatePage();
