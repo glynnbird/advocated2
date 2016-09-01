@@ -19,28 +19,7 @@ if ('serviceWorker' in navigator) {
 var envoy = window.location.origin;
 var db = new PouchDB('advocated');
 var loggedinuser = null;
-
-
-var user = {
-  "_id": "07cebfee8de061fd61bc5cec969acf42",
-  "_rev": "1-1efb5312fe624eff0df2abb74cf53f1e",
-  "collection": "user",
-  "display_name": "markwats",
-  "identifiers": {
-    "slack": {
-      "token": "iwnqIhAVxV5IWDhw8HTuFTV8",
-      "team_id": "T08LVDR7Y",
-      "team_domain": "ibm-analytics",
-      "channel_id": "C0L9K4CBH",
-      "channel_name": "cds-advocated",
-      "user_id": "U0NMU6A8K",
-      "user_name": "markwats",
-      "command": "/advocated",
-      "text": "SXSW",
-      "response_url": "https://hooks.slack.com/commands/T08LVDR7Y/29356843537/dmhVY2KVwKU3ZYzCdpYj5RE4"
-    }
-  }
-};
+var degrees = 0;
 
 // get milliseconds
 var ms = function() {
@@ -49,18 +28,19 @@ var ms = function() {
 
 // perform a sync
 var sync = function() {
-  var start = ms();
-  var remote = new PouchDB(envoy + '/advocated2');
-  $('#syncprogress').removeClass('hide');
+  var url = window.location.origin.replace('//', '//' + loggedinuser.username + ':' + loggedinuser.meta.password + '@');
+  console.log(url);
+  var remote = new PouchDB(url + '/advocated2');
 
-  db.sync(remote).then(function() {
-    var t = (ms() - start)/1000;
-    Materialize.toast('Sync complete ('+ t + ')', 4000);
-    $('#syncprogress').addClass('hide');
-    //renderList();
+  db.sync(remote, {live: true, retry: true}).on('change', function(c) {
+    degrees += 10;
+    console.log('change',c)
+    $('#syncviz').css({'transform' : 'rotate('+ degrees +'deg)'});
+    updatePage();
+  }).on('complete', function() {
+    updatePage();
   });
 }
-
 
 // form submitter
 var submitForm = function (id) {
@@ -124,9 +104,9 @@ var submitForm = function (id) {
   };
 
   // add user data into the mix
-  o.userid = user._id;
-  o.userDisplayName = user.display_name;
-  o.userDomain = user.identifiers.slack.team_domain;
+  o.userid = loggedinuser.username
+  o.userDisplayName = loggedinuser.meta.user_name;
+  o.userDomain = loggedinuser.meta.team_name;
   o.ts = ms();
 
   // write to the database
@@ -185,6 +165,8 @@ var updatePage = function() {
           page += 'blogged.html';
         } else if (doc.collection == 'press') {
           page += 'pr.html';
+        } else if (doc.collection == 'expense') {
+          page += 'expense.html';
         }
         $.get(page, function(template) {
           var rendered = Mustache.render(template, doc);
@@ -268,6 +250,19 @@ var initCheckboxes = function(sponsored, categories) {
 	}
 };
 
+var getCurrencyOptions = function(currency) {
+  var currencies = {
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£'
+  };
+  var html = '';
+  for (var i in currencies) {
+    var selected = (i === currency )?'selected="selected"':''
+    html +=  '<option value="' + i + '" ' + selected + ' ">' + currencies[i] + '</option>\n'; 
+  }
+  return html;
+}
 
 $(document).ready(function(){
   // materialize special
@@ -279,6 +274,8 @@ $(document).ready(function(){
     loggedinuser = data;
     var msg = 'Welcome back, ' + data.meta.user_name + ' (' + data.meta.team_name + ')';
     Materialize.toast(msg, 4000);
+
+    sync();
   });
 
   updatePage();

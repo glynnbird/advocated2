@@ -6,7 +6,9 @@
     dataType: 'json'
   }
   $.ajax(req).done(function(data) {
-    console.log('tokendata', data);
+    if (data && data.ok === false) {
+       return Materialize.toast('Invalid token', 10000);
+    }
     delete data._rev
     data._id = '_local/user';
     db.put(data).then(function() {
