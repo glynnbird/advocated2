@@ -21,6 +21,46 @@ var db = new PouchDB('advocated');
 var loggedinuser = null;
 var degrees = 0;
 
+var setupDesignDocs = function() {
+  var thingsByMonth = function(doc) {
+    var bits = doc.dtstart.split('-');
+    var year = parseInt(bits[0]);
+    var month = parseInt(bits[1]);
+    emit([year,month,doc.collection], 1);
+  };
+  var audienceByMonth = function(doc) {
+    if (doc.collection === 'session') {
+      var bits = doc.dtstart.split('-');
+      var year = parseInt(bits[0]);
+      var month = parseInt(bits[1]);
+      emit([year,month], doc.attendees);
+    }
+  };
+  var ddoc = {
+    _id: '_design/index',
+    views: {
+      thingsByMonth: {
+        map: thingsByMonth.toString(),
+        reduce: '_count'
+      },
+      audienceByMonth: {
+        map: audienceByMonth.toString(),
+        reduce: '_count'
+      }
+    }
+  };
+  db.get(ddoc._id, function(err, currentDoc) {
+    if (err || JSON.stringify(currentDoc.views) != JSON.stringify(ddoc.views)) {
+      console.log('Installing design docs');
+      if (currentDoc) {
+        ddoc._rev = currentDoc._rev;
+      }
+      return db.put(ddoc);
+    }
+  });
+
+};
+
 // get milliseconds
 var ms = function() {
   return new Date().getTime();
@@ -29,10 +69,15 @@ var ms = function() {
 // perform a sync
 var sync = function() {
   var url = window.location.origin.replace('//', '//' + loggedinuser.username + ':' + loggedinuser.meta.password + '@');
-  console.log(url);
   var remote = new PouchDB(url + '/advocated2');
 
-  db.sync(remote, {live: true, retry: true}).on('change', function(c) {
+  // don't replicate design documents
+  var filter = function(doc) {
+    return doc._id.indexOf('_design') !== 0;
+  };
+
+  // sync live with retry, animating the icon when there's a change'
+  db.sync(remote, {live: true, retry: true, filter: filter}).on('change', function(c) {
     degrees += 10;
     console.log('change',c)
     $('#syncviz').css({'transform' : 'rotate('+ degrees +'deg)'});
@@ -274,10 +319,20 @@ $(document).ready(function(){
     loggedinuser = data;
     var msg = 'Welcome back, ' + data.meta.user_name + ' (' + data.meta.team_name + ')';
     Materialize.toast(msg, 4000);
-
     sync();
+  }).catch(function(e) {
+    $('#themenu').hide();
+    $('#main').hide();
+    $('#notloggedin').removeClass('hide');
   });
+  
+  // install any design docs
+  setupDesignDocs();
 
+  // render the page
   updatePage();
+  
+
+  
 });
 

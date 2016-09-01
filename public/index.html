@@ -10,35 +10,35 @@
 
 <body onhashchange='updatePage()'>
 
-  <nav class="teal lighten-2">
+  <nav id="thenav" class="teal lighten-2">
     <div class="nav-wrapper">
       <a href="/" class="brand-logo">Advocated <i id="syncviz" class="material-icons">group_work</i></a>
-      
-      <a href="/#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="/#attended.html">Attended</a></li>
-        <li><a href="/#presented.html">Presented</a></li>
-        <li><a href="/#blogged.html">Blogged</a></li>
-        <li><a href="/#pr.html">PR</a></li>
-        <li><a href="/#expense.html">Expense</a></li>
-      </ul>
-      <ul class="side-nav" id="mobile-demo">
-        <li><a href="/#attended.html">Attended</a></li>
-        <li><a href="/#presented.html">Presented</a></li>
-        <li><a href="/#blogged.html">Blogged</a></li>
-        <li><a href="/#pr.html">PR</a></li>
-        <li><a href="/#expense.html">Expense</a></li>
-      </ul>
+      <span id="themenu">
+        <a href="/#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="/#attended.html">Attended</a></li>
+          <li><a href="/#presented.html">Presented</a></li>
+          <li><a href="/#blogged.html">Blogged</a></li>
+          <li><a href="/#pr.html">PR</a></li>
+          <li><a href="/#expense.html">Expense</a></li>
+        </ul>
+        <ul class="side-nav" id="mobile-demo">
+          <li><a href="/#attended.html">Attended</a></li>
+          <li><a href="/#presented.html">Presented</a></li>
+          <li><a href="/#blogged.html">Blogged</a></li>
+          <li><a href="/#pr.html">PR</a></li>
+          <li><a href="/#expense.html">Expense</a></li>
+        </ul>
+      </span>
     </div>
   </nav>
 
-  <div id="syncprogress" class="container hide">
-    <div class="progress">
-      <div class="indeterminate"></div>
-    </div>
+  <div id="main" class="container">
   </div>
 
-  <div id="main" class="container">
+  <div id="notloggedin" class="container hide">
+    <h4>You must be logged into Advocated to use it</h4>
+    <div>Try typing <pre>/advocated</pre> in Slack and clicking on the link you get back.</div>
   </div>
 
   <!--Import jQuery before materialize.js-->
