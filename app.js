@@ -104,7 +104,12 @@ var opts = {
 // run envoy
 var envoy = require('cloudant-envoy')(opts);
 envoy.events.on('listening', function() {
+  // create databases
   cloudant = envoy.cloudant;
+  cloudant.db.create('teams');
+  cloudant.db.create('tokens');
+
+  // use the databases
   teamsdb = cloudant.db.use('teams');
   tokensdb = cloudant.db.use('tokens');
   console.log('[OK]  Server is up');

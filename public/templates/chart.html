@@ -1,0 +1,11 @@
+
+
+
+<script>
+  db.query('index/thingsByMonth', {group_level: 2}).then(function(data) {
+    console.log(data);
+  });
+  db.query('index/audienceByMonth', {group_level: 2}).then(function(data) {
+    console.log(data);
+  });
+</script>
