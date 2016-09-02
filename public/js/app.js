@@ -45,7 +45,7 @@ var setupDesignDocs = function() {
       },
       audienceByMonth: {
         map: audienceByMonth.toString(),
-        reduce: '_count'
+        reduce: '_sum'
       }
     }
   };
@@ -96,11 +96,17 @@ var submitForm = function (id) {
     var a = elements[i];
     if (a.type && a.name && a.id) {
       var val = a.value;
+      var step = $(a).attr('step');
+      var float = (step==='any' || step ==='0.1')?true:false;
       var grouped = ($(a).attr('data-meta') === 'grouped')? true: false;
 
       switch (a.type) {
         case 'number':
-          val = parseInt(val);
+          if (float) {
+            val = parseFloat(val)
+          } else {
+            val = parseInt(val);
+          }
         break;
 
         case 'checkbox':
@@ -308,6 +314,13 @@ var getCurrencyOptions = function(currency) {
   }
   return html;
 }
+
+var renderGeoJSON = function(L, map, obj, style, label) {
+  var opts = {
+    style: style
+  }
+  var l = L.geoJson(obj, opts).addTo(map);
+};
 
 $(document).ready(function(){
   // materialize special

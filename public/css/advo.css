@@ -24,3 +24,9 @@ svg text.legend,
 svg rect.legend {
     display: none;
 }
+
+#mapid { height: 200px; }
+
+.leaflet-container {
+    background: #aaf;
+}
