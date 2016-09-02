@@ -20,8 +20,8 @@
     text-align: center;
 }
 
-svg text.legend,
-svg rect.legend {
+#audiencebymonth svg text.legend,
+#audiencebymonth svg rect.legend {
     display: none;
 }
 

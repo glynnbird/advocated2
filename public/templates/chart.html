@@ -3,23 +3,30 @@
   var dateformat = d3.time.format('%b-%Y');
   var simpledatavis = SimpleDataVis().attr('type', 'grouped-bar-chart');
 
-  db.query('index/thingsByMonth', {group_level: 2}).then(function(data) {
-    // console.log(data);
+  db.query('index/thingsByMonth', {group_level: 3}).then(function(data) {
+    // console.log('thingsByMonth:', JSON.stringify(data));
     simpledatavis
       .on('data', function(d) {
-        var months = data.rows || [];
-        months.forEach(function(month) {
-          month.activities = month.value;
-          month.key = dateformat(new Date(month.key[0] + '-' + month.key[1]));
-          delete month.value;
+        var months = (data.rows || []).map(function(row) {
+          var month = {
+            key: dateformat(new Date(row.key[0] + '-' + row.key[1])),
+          };
+
+          if (row.key.length > 2) {
+            month[row.key[2]] = row.value;
+            delete month.value;
+          }
+
+          return month;
         });
+        // console.log('thingsByMonth:transformed:', JSON.stringify(months));
         return months;
       })
       .render('#thingsbymonth');
   });
 
   db.query('index/audienceByMonth', {group_level: 2}).then(function(data) {
-    // console.log(data);
+    // console.log('audienceByMonth:', JSON.stringify(data));
     simpledatavis
       .on('data', function(d) {
         var months = data.rows || [];
@@ -28,6 +35,7 @@
           month.key = dateformat(new Date(month.key[0] + '-' + month.key[1]));
           delete month.value;
         });
+        // console.log('audienceByMonth:transformed:', JSON.stringify(months));
         return months;
       })
       .render('#audiencebymonth');

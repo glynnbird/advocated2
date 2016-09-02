@@ -33,7 +33,7 @@ var setupDesignDocs = function() {
       var bits = doc.dtstart.split('-');
       var year = parseInt(bits[0]);
       var month = parseInt(bits[1]);
-      emit([year,month], doc.attendees);
+      emit([year,month], (doc.attendees || 0));
     }
   };
   var ddoc = {
