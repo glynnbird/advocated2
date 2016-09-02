@@ -2,9 +2,11 @@
 var cfenv = require('cfenv'),
   path = require('path'),
   appEnv = cfenv.getAppEnv(),
+  async = require('async'),
   express = require('express'),
   bodyParser = require('body-parser'),s
   CryptoJS = require("crypto-js"),
+  slack = require('./lib/slack.js'),
   router = express.Router();
   cloudant = null,
   teamsdb = null,
@@ -101,6 +103,20 @@ var opts = {
     router: router
 };
 
+// queue to deal with outgoing Slack requests
+var q = async.queue(function(payload, done) {
+  envoy.db.get(payload, function(err, data) {
+    if (err) {
+      return done();
+    }
+    teamsdb.get(data.teamid, function(err, team) {
+      var url = team.slack.webhook;
+      slack.post(url, data, done);
+    });
+  });
+},1);
+
+
 // run envoy
 var envoy = require('cloudant-envoy')(opts);
 envoy.events.on('listening', function() {
@@ -113,6 +129,24 @@ envoy.events.on('listening', function() {
   teamsdb = cloudant.db.use('teams');
   tokensdb = cloudant.db.use('tokens');
   console.log('[OK]  Server is up');
+
+  // listen for changes on the Envoy datbase
+  var feed = envoy.db.follow({since: 'now'});
+  feed.on('change', function(change) {
+    var isnew = false;
+    for (var i in change.changes) {
+      // if this is the first time we've seen this doc
+      if (change.changes[i].rev.match(/^1/)) {
+        isnew = true;
+        break;
+      }
+    }
+    if (isnew) {
+      q.push(change.id);
+    }
+  });
+  feed.follow();
+
 });
 
 

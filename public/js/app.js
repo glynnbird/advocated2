@@ -97,7 +97,7 @@ var submitForm = function (id) {
     if (a.type && a.name && a.id) {
       var val = a.value;
       var step = $(a).attr('step');
-      var float = (step==='any' || step ==='0.1')?true:false;
+      var float = (step==='any' || step ==='0.0001')?true:false;
       var grouped = ($(a).attr('data-meta') === 'grouped')? true: false;
 
       switch (a.type) {
@@ -158,6 +158,7 @@ var submitForm = function (id) {
   o.userid = loggedinuser.username
   o.userDisplayName = loggedinuser.meta.user_name;
   o.userDomain = loggedinuser.meta.team_name;
+  o.teamid = loggedinuser.meta.team_id;
   o.ts = ms();
 
   // write to the database
