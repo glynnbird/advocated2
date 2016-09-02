@@ -65,3 +65,22 @@ Thanks for advocating. Please visit this URL to enter the details <https://local
 ```
 
 Note: when running locally you may have to change "https" for "http" for the url to work.
+
+## Differences with version 1
+
+### Data location 
+
+In the first version of `/advocated` the users themselves were stored in the same database as the sessions, events, blogs etc. When using Envoy, this is not possible. Envoy stores its users in a 'envoyusers' database and the format of the JSON is different.
+
+- teams - one document per Slack account
+- envoyusers - one document per user
+- advocated2 - the database containing all the sessions/events/blogs/etc for all users
+- tokens - one document per issued login token.
+
+## HTML Templating
+
+In the first version the HTML was generated server-side using Jade templates using a custom CSS stylesheet. The new version uses the MaterializeCSS framework and Mustache client-side templates.
+
+## Slack posting
+
+In the first version, all new postings came through the Node.js app and were posted to Slack. In the new version, new postsings are saved to each users' PouchDB database. Only when the database is synced can the Slack posting be made. The server-side app listens to changes on the database where postings are stored and posts any changes that result in a new 'rev=1-*' document.
