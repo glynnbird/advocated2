@@ -1,11 +1,42 @@
 
-
-
 <script>
+  var dateformat = d3.time.format('%b-%Y');
+  var simpledatavis = SimpleDataVis().attr('type', 'grouped-bar-chart');
+
   db.query('index/thingsByMonth', {group_level: 2}).then(function(data) {
-    console.log(data);
+    // console.log(data);
+    simpledatavis
+      .on('data', function(d) {
+        var months = data.rows || [];
+        months.forEach(function(month) {
+          month.activities = month.value;
+          month.key = dateformat(new Date(month.key[0] + '-' + month.key[1]));
+          delete month.value;
+        });
+        return months;
+      })
+      .render('#thingsbymonth');
   });
+
   db.query('index/audienceByMonth', {group_level: 2}).then(function(data) {
-    console.log(data);
+    // console.log(data);
+    simpledatavis
+      .on('data', function(d) {
+        var months = data.rows || [];
+        months.forEach(function(month) {
+          month.audience = month.value;
+          month.key = dateformat(new Date(month.key[0] + '-' + month.key[1]));
+          delete month.value;
+        });
+        return months;
+      })
+      .render('#audiencebymonth');
   });
+
+
 </script>
+
+<h3>Activities by Month</h3>
+<div class="advocated-chart" id="thingsbymonth"></div>
+<h3>Audience by Month</h3>
+<div class="advocated-chart" id="audiencebymonth"></div>

@@ -19,3 +19,8 @@
     padding-top: 0;
     text-align: center;
 }
+
+svg text.legend,
+svg rect.legend {
+    display: none;
+}
