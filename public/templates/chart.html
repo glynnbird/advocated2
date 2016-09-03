@@ -1,33 +1,43 @@
 
 <script>
   var dateformat = d3.time.format('%b-%Y');
-  var simpledatavis = SimpleDataVis().attr('type', 'grouped-bar-chart');
 
   db.query('index/thingsByMonth', {group_level: 3}).then(function(data) {
     // console.log('thingsByMonth:', JSON.stringify(data));
-    simpledatavis
+    SimpleDataVis()
+      .attr('type', 'stacked-bar-chart')
       .on('data', function(d) {
-        var months = (data.rows || []).map(function(row) {
-          var month = {
-            key: dateformat(new Date(row.key[0] + '-' + row.key[1])),
-          };
+        var kf = function(d) { return dateformat(new Date(d.key[0] + '-' + d.key[1])); };
+        var rf = function(l) {
+          var v = {};
+          l.forEach(function(d) {
+            v[d.key[2]] ? v[d.key[2]] += d.value : v[d.key[2]] = d.value;
+          });
+          return v;
+        };
 
-          if (row.key.length > 2) {
-            month[row.key[2]] = row.value;
-            delete month.value;
-          }
+        var results = [];
 
-          return month;
+        if (data.rows && data.rows.length > 0) {
+          results = d3.nest()
+            .key(kf)
+            .rollup(rf)
+            .entries(data.rows);
+        }
+
+        results.forEach(function(d) {
+          d.value = d.values;
         });
-        // console.log('thingsByMonth:transformed:', JSON.stringify(months));
-        return months;
+
+        return results;
       })
       .render('#thingsbymonth');
   });
 
   db.query('index/audienceByMonth', {group_level: 2}).then(function(data) {
     // console.log('audienceByMonth:', JSON.stringify(data));
-    simpledatavis
+    SimpleDataVis()
+      .attr('type', 'grouped-bar-chart')
       .on('data', function(d) {
         var months = data.rows || [];
         months.forEach(function(month) {
