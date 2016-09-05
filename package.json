@@ -4,7 +4,8 @@
   "description": "An offline-first data collection app",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,8 @@
     "cfenv": "^1.0.3",
     "cloudant-envoy": "^0.2.2",
     "crypto-js": "^3.1.6",
+    "express": "^4.14.0",
+    "request": "^2.74.0",
     "uuid": "^2.0.2"
   }
 }
