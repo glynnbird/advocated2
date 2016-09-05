@@ -226,6 +226,7 @@ var updatePage = function() {
           var rendered = Mustache.render(template, doc);
           $('#main').html(rendered);
           initForm();
+          $(window).scrollTop(0);
         });
       })
       .catch(function(err) {

@@ -25,6 +25,11 @@
     '/js/mustache.js',
     '/js/world.json',
     '/favicon.ico',
+    '/img/advocated-icon-36x36.png',
+    '/img/advocated-icon-48x48.png',
+    '/img/advocated-icon-72x72.png',
+    '/img/advocated-icon-96x96.png',
+    '/img/advocated-icon-512x512.png',
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/fonts/roboto/Roboto-Light.woff2',
     'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/fonts/roboto/Roboto-Medium.woff2',
@@ -41,8 +46,8 @@
     'https://cdn.jsdelivr.net/pouchdb/5.4.4/pouchdb.min.js',
     'https://d3js.org/d3.v3.min.js',
     'https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js',
-    'https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css'
-
+    'https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css',
+    'https://unpkg.com/leaflet@1.0.0-rc.3/dist/images/marker-icon.png'
   ];
 
 

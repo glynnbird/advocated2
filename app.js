@@ -63,7 +63,7 @@ router.post('/slack', bodyParser.urlencoded({ extended: false }), function(req, 
             data.ts = new Date().getTime() + 1000*60*60;
             delete data._rev;
             tokensdb.insert(data, function (err, data) {
-              res.send("Thanks for advocating. Please visit this URL to enter the details <https://" + appurl + "/?token=" + data.id + "#token.html>");
+              res.send("Thanks for advocating. Please visit this URL to enter the details <https://" + appurl + "/#token.html?token=" + data.id + ">");
             });
           });
         } else {
