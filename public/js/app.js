@@ -1,5 +1,5 @@
 if ('serviceWorker' in navigator) {
-  /*navigator.serviceWorker.register('/serviceworker.js', { scope: '/' }).then(function(reg) {
+  navigator.serviceWorker.register('/serviceworker.js', { scope: '/' }).then(function(reg) {
     
     if (reg.installing) {
       console.log('Service worker installing');
@@ -12,7 +12,7 @@ if ('serviceWorker' in navigator) {
   }).catch(function(error) {
     // registration failed
     console.log('Registration failed with ' + error);
-  });*/
+  });
 }
 
 // ET phone home
