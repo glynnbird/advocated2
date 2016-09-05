@@ -7,28 +7,42 @@
   /* global URL */
 
   // Cache name definitions
-  var cacheNameStatic = 'v1.1';
+  var cacheNameStatic = 'v1.0';
 
   var currentCacheNames = [ cacheNameStatic ];
 
   var urls = [
-    '/demo/',
-    '/demo/login.html',
-    '/demo/register.html',  
-    '/demo/css/envoydemo.css',
-    '/demo/js/app.js',
-    '/demo/js/index.js',
-    '/demo/js/login.js',
-    '/demo/js/mustache.js',
-    '/demo/js/register.js',
-    '/demo/js/pouchdb-envoy.js',
+    '/',
+    '/templates/attended.html',
+    '/templates/blogged.html',
+    '/templates/chart.html',
+    '/templates/expense.html',
+    '/templates/pr.html',
+    '/templates/presented.html',
+    '/templates/token.html',
+    '/css/advo.css',
+    '/js/app.js',
+    '/js/mustache.js',
+    '/js/world.json',
+    '/favicon.ico',
     'https://fonts.googleapis.com/icon?family=Material+Icons',
-    'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/fonts/roboto/Roboto-Regular.woff2',
+    'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/fonts/roboto/Roboto-Light.woff2',
+    'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/fonts/roboto/Roboto-Medium.woff2',
+    'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/fonts/roboto/Roboto-Regular.woff2',
+    'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/fonts/roboto/Roboto-Bold.woff2',
     'https://fonts.gstatic.com/s/materialicons/v17/2fcrYFNaTjcS6g4U3t-Y5UEw0lE80llgEseQY3FEmqw.woff2',
-    'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css',
     'https://code.jquery.com/jquery-2.1.1.min.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js',
-    'https://cdn.jsdelivr.net/pouchdb/5.4.4/pouchdb.min.js'
+    'https://d3js.org/d3.v3.min.js',
+    'https://ibm-cds-labs.github.io/simple-data-vis/simpledatavis.js',
+    'https://ibm-cds-labs.github.io/simple-data-vis/vis/simpledatavis-groupedbarchart.js',
+    'https://ibm-cds-labs.github.io/simple-data-vis/vis/simpledatavis-stackedbarchart.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js',
+    'https://cdn.jsdelivr.net/pouchdb/5.4.4/pouchdb.min.js',
+    'https://d3js.org/d3.v3.min.js',
+    'https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js',
+    'https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css'
+
   ];
 
 
@@ -64,7 +78,6 @@
   // The page has made a request
   self.addEventListener("fetch", function (event) {
     var requestURL = new URL(event.request.url);
-    
     event.respondWith(
       caches.match(event.request)
         .then(function (response) {

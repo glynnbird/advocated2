@@ -1,5 +1,5 @@
 if ('serviceWorker' in navigator) {
- /* navigator.serviceWorker.register('/demo/serviceworker.js', { scope: '/demo/' }).then(function(reg) {
+  /*navigator.serviceWorker.register('/serviceworker.js', { scope: '/' }).then(function(reg) {
     
     if (reg.installing) {
       console.log('Service worker installing');
@@ -193,18 +193,20 @@ var initForm = function() {
 var updatePage = function() {
   var docid = null,
     token = null;
-  if (location.search && location.search.indexOf('id=') != -1) {
-    var idx = location.search.indexOf('id=');
-    var h = location.search.indexOf('#', idx) != -1 ? location.search.indexOf('#', idx) : location.search.length;
-    var a = location.search.indexOf('&', idx) != -1 ? location.search.indexOf('&', idx) : location.search.length;
-    docid = location.search.substring(idx+3, Math.min(h, a));
+  if (location.hash && location.hash.indexOf('id=') != -1) {
+    var idx = location.hash.indexOf('id=');
+    console.log(idx);
+    var h = location.hash.indexOf('#', idx) != -1 ? location.hash.indexOf('#', idx) : location.hash.length;
+    var a = location.hash.indexOf('&', idx) != -1 ? location.hash.indexOf('&', idx) : location.hash.length;
+    docid = location.hash.substring(idx+3, Math.min(h, a));
   }
-  if (location.search && location.search.indexOf('token=') != -1) {
-    var idx = location.search.indexOf('token=');
-    var h = location.search.indexOf('#', idx) != -1 ? location.search.indexOf('#', idx) : location.search.length;
-    var a = location.search.indexOf('&', idx) != -1 ? location.search.indexOf('&', idx) : location.search.length;
-    token = location.search.substring(idx+6, Math.min(h, a));
+  if (location.hash && location.hash.indexOf('token=') != -1) {
+    var idx = location.hash.indexOf('token=');
+    var h = location.hash.indexOf('#', idx) != -1 ? location.hash.indexOf('#', idx) : location.hash.length;
+    var a = location.hash.indexOf('&', idx) != -1 ? location.hash.indexOf('&', idx) : location.hash.length;
+    token = location.hash.substring(idx+6, Math.min(h, a));
   }
+  console.log('docid',docid)
   if (docid) {
     db.get(docid)
       .then(function(doc) {
